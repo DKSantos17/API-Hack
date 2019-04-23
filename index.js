@@ -1,17 +1,61 @@
-function goGet(url, stat) {
+function single(url, stat) {
 fetch(url)
 .then(response => response.json())
 .then(json => {
   let nonZero = json.players.filter(obj =>{
 return obj.stats[stat]
   })
-let sorted = nonZero.sort(function sortBy(a, b) {
+  console.log(nonZero)
+  findMost(nonZero, stat)
+/*let sorted = nonZero.sort(function sortBy(a, b) {
   return b.stats[stat] - a.stats[stat]
 })
 let most = sorted[0].stats[stat]
 let result = sorted.filter(player => player.stats[stat] === most)
-console.log(result)
+console.log(result)*/
 })
+}
+
+function displayResult(arr, stat) {
+  for (i = 0; i < arr.length; i++) {
+    console.log(arr[i].name + arr[i].stats[stat])
+    $('#results').html(arr[i].name + ': ' + arr[i].stats[stat] + ' ' + statsKey[stat])
+  }
+}
+
+function findMost(arr, stat) {
+  let sorted = arr.sort(function sortBy(a, b) {
+    return b.stats[stat] - a.stats[stat]
+  })
+  let most = sorted[0].stats[stat]
+  let result = sorted.filter(player => player.stats[stat] === most)
+  displayResult(result, stat)
+}
+
+function rangeOnce(url, stat){
+  let empty = []
+  for (i=0; i<url.length; i++) {
+    fetch(url[i])
+    .then(response => response.json())
+    .then(json => {
+      let nonZero = json.players.filter (obj => {
+        return obj.stats[stat]
+      })
+      empty.push(...nonZero)
+    })
+  }
+  console.log(empty)
+  findMost(empty, stat)
+  /*console.log(empty)
+  let sorted = empty.push('test')
+  sorted = empty.sort(function sortBy(a, b) {
+    console.log('sorting')
+    return b.stats[stat] - a.stats[stat]
+  })
+  console.log(sorted)
+  let most = sorted[0].stats[stat]
+  let result = sorted.filter(player => player.stats [stat] === most)
+  console.log(result)*/
 }
 
 function watchSuperlative() {
@@ -20,9 +64,42 @@ function watchSuperlative() {
     let position = $('#superlative-position').val();
     /*let mostLeast = $('#superlative-most-least').val();*/
     let stat = $('#superlative-stat').val();
-    let season = $('#superlative-season').val();
-    let url = 'https://api.fantasy.nfl.com/v1/players/stats?statType=seasonStats&season=' + season + '&position=' + position + '&format=json';
-    goGet(url, stat)
+    let range = $('#superlative-range-type').val()
+    if (range === 'one-season') {
+      let season = $('#superlative-season').val();
+      let url = 'https://api.fantasy.nfl.com/v1/players/stats?statType=seasonStats&season=' + season + '&position=' + position + '&format=json';
+      single(url, stat)}
+    else if (range === 'one-game') {
+      let season = $('#superlative-season').val();
+      let week = $('#superlative-week').val();
+      let url = 'https://api.fantasy.nfl.com/v1/players/stats?statType=weekStats&season=' + season + '&week=' + week + '&position=' + position + '&format=json';
+      single(url, stat)
+      console.log(url)
+    }
+    else if (range === 'multiple-games') {
+      let season = $('#superlative-season').val();
+      let week = $('#superlative-week').val();
+      let week2 = $('#superlative-week-end').val();
+      let weekRange = []
+      if (week < week2) {
+        for (i=week; i<=week2; i++) {
+          weekRange.push(i)
+        }
+      }
+      else {
+        for (i=week2; i<=week; i++) {
+          weekRange.push(i)
+        }
+      }
+      let url = []
+      for (i=0; i<weekRange.length; i++) {
+        url.push('https://api.fantasy.nfl.com/v1/players/stats?statType=weekStats&season=' + season + '&week=' + weekRange[i] + '&position=' + position + '&format=json')
+      }
+      rangeOnce(url, stat)
+    }
+    else {
+      alert('not ready')
+    }
   })
 }
 
@@ -31,16 +108,16 @@ function watchForSelect () {
     $('#superlative-range').empty()
     opt = $('#superlative-range-type').val()
     if (opt === 'one-game') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Week: <input type="number" id="superlative-week">')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Week: <input type="number" id="superlative-week">').attr('class', 'one-game')
     }
     if (opt === 'one-season') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season">')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season">').attr('class', 'one-season')
     }
     if (opt === 'multiple-games') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Weeks: <input type="number" id="superlative-week">&ndash;<input type="number" id="superlative-week-end">')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Weeks: <input type="number" id="superlative-week">&ndash;<input type="number" id="superlative-week-end">').attr('class', 'multiple-games')
     }
     if (opt === 'multiple-seasons') {
-      $('#superlative-range').html('Seasons: <input type="number" id="superlative-season">&ndash;<input type="number" id="superlative-season-end">')
+      $('#superlative-range').html('Seasons: <input type="number" id="superlative-season">&ndash;<input type="number" id="superlative-season-end">').attr('class', 'multiple-seasons')
     }
   })
 }
@@ -65,7 +142,7 @@ function gidderDone() {
 
 gidderDone()
 //The endpoint "https://api.fantasy.nfl.com/v1/docs/service?serviceName=gameStats" contains a key for all of the stats returned by the other endpoints. Unfortunately, that specific endpoint doesn't support CORS, and as such I have reproduced the key in an abridged form here.
-let stats = {
+let statsKey = {
     1: 'Games played',
     2: 'Passing Attempts',
     3: 'Passing Completions',
