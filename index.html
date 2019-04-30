@@ -36,14 +36,13 @@
                     <option value="RB">Running Back</option>
                     <option value="WR">Wide Receiver</option>
                     <option value="TE">Tight End</option>
+                    <!--<option value="K">Kicker</option>
+                    <option value="DEF">Defense</option>
+                    <option value="DL">Defensive Lineman</option>
+                    <option value="LB">Linebacker</option>
+                    <option value="DB">Defensive Back</option>-->
                 </select>
                  had the most 
-                 <!--<select id="superlative-most-least">
-                     <option hidden disabled selected value>most/least</option>
-                     <option value="most">most</option>
-                     <option value="least">least</option>
-                 </select>
-                 <input type="text" id="superlative-stat" placeholder="type of stat">-->
                  <select id="superlative-stat">
                      <option hidden disabled selected value>statistic</option>
                      <option value="2">Passing Attempts</option>
@@ -53,6 +52,15 @@
                      <option value="6">Passing Touchdowns</option>
                      <option value="7">Interceptions Thrown</option>
                      <option value="8">Sacks against</option>
+                     <option value="13">Rushing Attempts</option>
+                     <option value="14">Rushing Yards</option>
+                     <option value="15">Rushing Touchdowns</option>
+                     <option value="20">Receptions</option>
+                     <option value="21">Receiving Yards</option>
+                     <option value="22">Receiving Touchdowns</option>
+                     <option value="31">Fumbles</option>
+                     <option value="30">Fumbles Lost</option>
+                     <option value="32">2-Point Conversions</option>
                  </select>
                  <select id="superlative-range-type">
                      <option hidden disabled selected value>select range</option>
@@ -67,9 +75,9 @@
             <input type="submit" value="Find" id="most-recent-submit">
         </form>
         <h2>Results</h2>
-        <section id="results">
+        <ul id="results">
             
-        </section>
+        </ul>
         <script src="//code.jquery.com/jquery.min.js"></script>
         <script src="index.js"></script>
     </body>

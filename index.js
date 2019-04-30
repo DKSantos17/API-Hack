@@ -5,26 +5,20 @@ fetch(url)
   let nonZero = json.players.filter(obj =>{
 return obj.stats[stat]
   })
-  console.log(nonZero)
   findMost(nonZero, stat)
-/*let sorted = nonZero.sort(function sortBy(a, b) {
-  return b.stats[stat] - a.stats[stat]
-})
-let most = sorted[0].stats[stat]
-let result = sorted.filter(player => player.stats[stat] === most)
-console.log(result)*/
 })
 }
 
 function displayResult(arr, stat) {
+  $('#results').empty()
   for (i = 0; i < arr.length; i++) {
-    console.log(arr[i].name + arr[i].stats[stat])
-    $('#results').html(arr[i].name + ': ' + arr[i].stats[stat] + ' ' + statsKey[stat])
+    $('#results').append('<li>' + arr[i].name + ': ' + arr[i].stats[stat] + ' ' + statsKey[stat] + '</li>')
   }
 }
 
 function findMost(arr, stat) {
   let sorted = arr.sort(function sortBy(a, b) {
+    console.log('sorting')
     return b.stats[stat] - a.stats[stat]
   })
   let most = sorted[0].stats[stat]
@@ -41,28 +35,21 @@ function rangeOnce(url, stat){
       let nonZero = json.players.filter (obj => {
         return obj.stats[stat]
       })
-      empty.push(...nonZero)
+      let sorted = nonZero.sort(function sortBy(a, b) {
+        console.log('sorting')
+        return b.stats[stat] - a.stats[stat]
+      })
+      let most = sorted[0].stats[stat]
+      let result = sorted.filter(player => player.stats[stat] === most)
+      console.log(result)
     })
   }
-  console.log(empty)
-  findMost(empty, stat)
-  /*console.log(empty)
-  let sorted = empty.push('test')
-  sorted = empty.sort(function sortBy(a, b) {
-    console.log('sorting')
-    return b.stats[stat] - a.stats[stat]
-  })
-  console.log(sorted)
-  let most = sorted[0].stats[stat]
-  let result = sorted.filter(player => player.stats [stat] === most)
-  console.log(result)*/
 }
 
 function watchSuperlative() {
   $('#superlative').submit(event => {
     event.preventDefault();
     let position = $('#superlative-position').val();
-    /*let mostLeast = $('#superlative-most-least').val();*/
     let stat = $('#superlative-stat').val();
     let range = $('#superlative-range-type').val()
     if (range === 'one-season') {
@@ -97,8 +84,25 @@ function watchSuperlative() {
       }
       rangeOnce(url, stat)
     }
-    else {
-      alert('not ready')
+    else if (range === 'multiple-seasons') {
+      let season = $('#superlative-season').val();
+      let season2 = $('#superlative-season-end').val();  
+      let seasonRange = []
+      if (season < season2) {
+        for (i=season; i<=season2; i++) {
+          seasonRange.push(i)
+        }
+      }
+      else {
+        for (i=season2; i<=season; i++) {
+          seasonRange.push(i)
+        }
+      }
+      let url = []
+      for (i=0; i<seasonRange.length; i++) {
+        url.push('https://api.fantasy.nfl.com/v1/players/stats?statType=seasonStats&season=' + seasonRange[i] + '&position=' + position + '&format=json')
+      }
+      rangeOnce(url, stat)
     }
   })
 }
@@ -108,16 +112,16 @@ function watchForSelect () {
     $('#superlative-range').empty()
     opt = $('#superlative-range-type').val()
     if (opt === 'one-game') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Week: <input type="number" id="superlative-week">').attr('class', 'one-game')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season" value="2018"><br>Week: <input type="number" id="superlative-week" value="1">').attr('class', 'one-game')
     }
     if (opt === 'one-season') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season">').attr('class', 'one-season')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season" value="2018">').attr('class', 'one-season')
     }
     if (opt === 'multiple-games') {
-      $('#superlative-range').html('Season: <input type="number" id="superlative-season"><br>Weeks: <input type="number" id="superlative-week">&ndash;<input type="number" id="superlative-week-end">').attr('class', 'multiple-games')
+      $('#superlative-range').html('Season: <input type="number" id="superlative-season" value="2018"><br>Weeks: <input type="number" id="superlative-week" value="1">&ndash;<input type="number" id="superlative-week-end" value="17">').attr('class', 'multiple-games')
     }
     if (opt === 'multiple-seasons') {
-      $('#superlative-range').html('Seasons: <input type="number" id="superlative-season">&ndash;<input type="number" id="superlative-season-end">').attr('class', 'multiple-seasons')
+      $('#superlative-range').html('Seasons: <input type="number" id="superlative-season" value="2009">&ndash;<input type="number" id="superlative-season-end" value="2018">').attr('class', 'multiple-seasons')
     }
   })
 }
@@ -235,15 +239,5 @@ let statsKey = {
     90: '50+ Yard INT Return TD Bonus',
     91: '50+ Yard Fumble Return TD Bonus'
 }
-
-/*fetch(url)
-.then(res => res.json())
-.then(json => {
-  console.log(json.players[0].stats)
-  let obj = json.players[0].stats
-// json.players.forEach(player => { // console.log(player.name) // }) // json.players[0].stats.forEach(stat => { // console.log(stat) // }) 
-for(let stat in obj) { console.log(stats[stat], obj[stat]) }
-
-})*/
 
 
