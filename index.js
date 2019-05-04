@@ -2,31 +2,63 @@ function single(url, stat) {
 fetch(url)
 .then(response => response.json())
 .then(json => {
-  let nonZero = json.players.filter(obj =>{
-return obj.stats[stat]
-  })
-  findMost(nonZero, stat)
+  let players = json.players
+  findMost(players, stat)
 })
 }
 
 function displayResult(arr, stat) {
   $('#results').empty()
-  for (i = 0; i < arr.length; i++) {
-    $('#results').append('<li>' + arr[i].name + ': ' + arr[i].stats[stat] + ' ' + statsKey[stat] + '</li>')
+  if (arr.length===1) {
+    $('#results').append(arr[0].name + ': ' + arr[0].stats[stat] + ' ' + statsKey[stat])
+  }
+  else {
+    $('#results').append(arr[0].stats[stat] + ' ' + statsKey[stat] + ':')
+    for (i = 0; i < arr.length; i++) {
+      $('#results').append('<br>' + arr[i].name)
+  }
   }
 }
 
 function findMost(arr, stat) {
-  let sorted = arr.sort(function sortBy(a, b) {
-    console.log('sorting')
+  let nonZero = arr.filter(obj =>{
+    return obj.stats[stat]
+  })
+  if (nonZero.length===0) {
+    alert('No players were found who match your search criteria.')
+  }
+  else {
+  let sorted = nonZero.sort(function sortBy(a, b) {
     return b.stats[stat] - a.stats[stat]
   })
   let most = sorted[0].stats[stat]
   let result = sorted.filter(player => player.stats[stat] === most)
   displayResult(result, stat)
 }
+}
 
 function rangeOnce(url, stat){
+  let empty = url.map(async url => { let data = await fetch(url) 
+    let jsonData = await data.json() 
+    return jsonData })
+
+Promise.all(empty) .then(data => { let arr = [] 
+  data = data.forEach(player => { arr.push(...player.players) }) 
+  findMost(arr, stat) })
+  /*let empty = url.map(async url => {
+    let data = await fetch(url)
+    let jsonData = await data.json()
+    return jsonData
+  })
+  Promise.all(empty)
+  .then(data =>{
+    let arr = []
+    data.forEach(player => {
+      arr.push(...player.players)
+    })
+    console.log(arr)
+  )
+
   let empty = []
   for (i=0; i<url.length; i++) {
     fetch(url[i])
@@ -43,7 +75,7 @@ function rangeOnce(url, stat){
       let result = sorted.filter(player => player.stats[stat] === most)
       console.log(result)
     })
-  }
+  }*/
 }
 
 function watchSuperlative() {
@@ -61,7 +93,6 @@ function watchSuperlative() {
       let week = $('#superlative-week').val();
       let url = 'https://api.fantasy.nfl.com/v1/players/stats?statType=weekStats&season=' + season + '&week=' + week + '&position=' + position + '&format=json';
       single(url, stat)
-      console.log(url)
     }
     else if (range === 'multiple-games') {
       let season = $('#superlative-season').val();
