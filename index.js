@@ -7,17 +7,14 @@ fetch(url)
 })
 }
 
-function displayResult(arr, stat) {
-  $('#results').empty()
-  if (arr.length===1) {
-    $('#results').append('<h2>Results</h2>' + arr[0].name + ': ' + arr[0].stats[stat] + ' ' + statsKey[stat])
-  }
-  else {
-    $('#results').append('<h2>Results</h2>' + arr[0].stats[stat] + ' ' + statsKey[stat] + ':')
-    for (i = 0; i < arr.length; i++) {
-      $('#results').append('<br>' + arr[i].name)
-  }
-  }
+function rangeOnce(url, stat){
+  let empty = url.map(async url => { let data = await fetch(url) 
+    let jsonData = await data.json() 
+    return jsonData })
+
+Promise.all(empty) .then(data => { let arr = [] 
+  data = data.forEach(player => { arr.push(...player.players) }) 
+  findMost(arr, stat) })
 }
 
 function findMost(arr, stat) {
@@ -37,14 +34,17 @@ function findMost(arr, stat) {
 }
 }
 
-function rangeOnce(url, stat){
-  let empty = url.map(async url => { let data = await fetch(url) 
-    let jsonData = await data.json() 
-    return jsonData })
-
-Promise.all(empty) .then(data => { let arr = [] 
-  data = data.forEach(player => { arr.push(...player.players) }) 
-  findMost(arr, stat) })
+function displayResult(arr, stat) {
+  $('#results').empty()
+  if (arr.length===1) {
+    $('#results').append('<h2>Results</h2>' + arr[0].name + ': ' + arr[0].stats[stat] + ' ' + statsKey[stat])
+  }
+  else {
+    $('#results').append('<h2>Results</h2>' + arr[0].stats[stat] + ' ' + statsKey[stat] + ':')
+    for (i = 0; i < arr.length; i++) {
+      $('#results').append('<br>' + arr[i].name)
+  }
+  }
 }
 
 function watchForm() {

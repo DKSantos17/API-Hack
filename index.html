@@ -10,40 +10,38 @@
     <body>
         <h1>NFL Superlative Stat Finder</h1>
         <div class="style">
-        <form>
-            <p>What 
-                <select id="position" required>
-                    <option hidden disabled selected value>position</option>
-                    <option value="QB">Quarterback</option>
-                    <option value="RB">Running Back</option>
-                    <option value="WR">Wide Receiver</option>
-                    <option value="TE">Tight End</option>
-                    <option value="K">Kicker</option>
-                    <option value="DEF">Defense</option>
-                    <option value="DL">Defensive Lineman</option>
-                    <option value="LB">Linebacker</option>
-                    <option value="DB">Defensive Back</option>
-                </select>
-                 had the most 
-                 <select id="stat" required>
-                     <option hidden disabled selected value>Choose a position</option>
-                 </select>
-                 <select id="range-type" required>
-                     <option hidden disabled selected value>select range</option>
-                     <option value="one-game">in a single week</option>
-                     <option value="one-season">in a single season</option>
-                     <option value="multiple-games">in one game over a range</option>
-                     <option value="multiple-seasons">in one season over a range</option>
-                 </select>
-                ?
-            <section id="range"></section>
-            </p>
-            <input type="submit" value="Find" id="submit">
-        </form>
-        <section id="results">
-            
-        </section>
-    </div>
+            <form>
+                <p>What 
+                    <select id="position" required>
+                        <option hidden disabled selected value>position</option>
+                        <option value="QB">Quarterback</option>
+                        <option value="RB">Running Back</option>
+                        <option value="WR">Wide Receiver</option>
+                        <option value="TE">Tight End</option>
+                        <option value="K">Kicker</option>
+                        <option value="DEF">Defense</option>
+                        <option value="DL">Defensive Lineman</option>
+                        <option value="LB">Linebacker</option>
+                        <option value="DB">Defensive Back</option>
+                    </select>
+                    had the most 
+                    <select id="stat" required>
+                        <option hidden disabled selected value>Choose a position</option>
+                    </select>
+                    <select id="range-type" required>
+                        <option hidden disabled selected value>select range</option>
+                        <option value="one-game">in a single week</option>
+                        <option value="one-season">in a single season</option>
+                        <option value="multiple-games">in one game over a range</option>
+                        <option value="multiple-seasons">in one season over a range</option>
+                    </select>
+                    ?
+                <section id="range"></section>
+                </p>
+                <input type="submit" value="Find" id="submit">
+            </form>
+            <section id="results"></section>
+        </div>
         <script src="//code.jquery.com/jquery.min.js"></script>
         <script src="index.js"></script>
     </body>
